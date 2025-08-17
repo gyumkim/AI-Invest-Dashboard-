@@ -302,7 +302,7 @@
                     
                     loader.style.display = 'inline-block';
                     popupTitle.textContent = '뉴스 요약 중...';
-                    popupText.textContent = '';
+                    popupText.textContent = '잠시만 기다려주세요.';
                     popup.style.display = 'flex';
 
                     try {
@@ -324,11 +324,19 @@
             // 시장 동향 분석 기능
             marketAnalysisBtn.addEventListener('click', async () => {
                 const discussionText = discussionBox.innerText;
-                const prompt = `현재 토론 내용과 시장 뉴스를 바탕으로 AI 투자 시장의 전반적인 동향을 한 문단으로 분석해 주세요.`;
+                const newsText = document.getElementById('news-list').innerText;
+                const prompt = `현재 토론 내용과 시장 뉴스를 바탕으로 AI 투자 시장의 전반적인 동향을 한 문단으로 분석해 주세요.
+                
+                <토론 내용>
+                ${discussionText}
+                
+                <시장 뉴스>
+                ${newsText}
+                `;
 
                 loader.style.display = 'inline-block';
                 popupTitle.textContent = '시장 동향 분석 중...';
-                popupText.textContent = '';
+                popupText.textContent = '잠시만 기다려주세요.';
                 popup.style.display = 'flex';
                 
                 try {
@@ -359,7 +367,8 @@
                 let chatHistory = [];
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
                 const payload = { contents: chatHistory };
-                const apiKey = "";
+                // NOTE: Replace "YOUR_API_KEY" with your actual Gemini API key
+                const apiKey = "YOUR_API_KEY";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
                 
                 let response = null;
