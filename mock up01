@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 투자 대시보드 목업</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="header">
+            <h1>AI Investment Dashboard TV</h1>
+        </header>
+
+        <main class="main-content">
+            <div class="chart-section">
+                <h2>주식 차트</h2>
+                <div class="chart-placeholder">
+                    <span>(인터랙티브 차트 영역)</span>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <div class="stock-list">
+                    <h2>종목</h2>
+                    <ul id="stock-list">
+                        <li data-stock="stock1">
+                            <span class="stock-name">S&P 500</span>
+                            <span class="stock-price">5,200.50</span>
+                            <span class="stock-change">+0.85%</span>
+                        </li>
+                        <li data-stock="stock2">
+                            <span class="stock-name">NASDAQ</span>
+                            <span class="stock-price">18,345.10</span>
+                            <span class="stock-change">-0.55%</span>
+                        </li>
+                        <li data-stock="stock3">
+                            <span class="stock-name">Apple (AAPL)</span>
+                            <span class="stock-price">220.15</span>
+                            <span class="stock-change">+1.20%</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="news-section">
+                    <h2>AI 기반 뉴스</h2>
+                    <ul id="news-list">
+                        <li>AI, 반도체 산업의 새로운 성장 동력으로 부상</li>
+                        <li>(AAPL) 신제품 발표, 시장 예상치 상회</li>
+                        <li>연준 금리 발표 임박, 시장 변동성 확대</li>
+                    </ul>
+                </div>
+                <div class="discussion-section">
+                    <h2>실시간 토론</h2>
+                    <div class="discussion-box">
+                        <div class="message">
+                            <strong>사용자1:</strong> AI 관련주 오늘 오르네요!
+                        </div>
+                        <div class="message">
+                            <strong>AI_Bot:</strong> 네, 관련 뉴스 분석 결과 긍정적입니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
