@@ -350,8 +350,8 @@
                         
                         popupText.textContent = summary;
                     } catch (error) {
-                        popupTitle.textContent = '오류 발생';
-                        popupText.textContent = '요약에 실패했습니다. 다시 시도해 주세요.';
+                        popupTitle.textContent = '요약 실패';
+                        popupText.textContent = 'API 호출 중 오류가 발생했습니다. API 키를 확인하거나 나중에 다시 시도해 주세요.';
                         console.error('Gemini API 호출 오류:', error);
                     } finally {
                         loader.style.display = 'none';
@@ -427,8 +427,8 @@
                     popupTitle.textContent = '오늘의 시장 동향 분석';
                     popupText.textContent = analysis;
                 } catch (error) {
-                    popupTitle.textContent = '오류 발생';
-                    popupText.textContent = '분석에 실패했습니다. 다시 시도해 주세요.';
+                    popupTitle.textContent = '분석 실패';
+                    popupText.textContent = 'API 호출 중 오류가 발생했습니다. API 키를 확인하거나 나중에 다시 시도해 주세요.';
                     console.error('Gemini API 호출 오류:', error);
                 } finally {
                     loader.style.display = 'none';
@@ -445,12 +445,16 @@
                 }
             });
 
-            // Gemini API 호출 함수
+            // Gemini API 호출 함수 - 수정된 부분
             async function callGeminiAPI(prompt) {
                 const apiKey = "AIzaSyBFzE8yoVdxLcHfnjGuYDKoMWDVh4K1J0Y";a 여기에 실제 Gemini API 키를 넣어주세요.
-
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
                 
+                // 프록시 우회를 위한 로직.
+                // 이 방법은 API 키 노출 문제를 근본적으로 해결하지 못하므로
+                // 상업적 서비스에서는 백엔드 서버 구축이 필수입니다.
+                const proxyUrl = `https://cors-anywhere.herokuapp.com/${apiUrl}`;
+
                 let response = null;
                 let retryCount = 0;
                 const maxRetries = 5;
@@ -458,9 +462,12 @@
 
                 while (retryCount < maxRetries) {
                     try {
-                        response = await fetch(apiUrl, {
+                        response = await fetch(proxyUrl, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest' // CORS Anywhere 헤더 추가
+                            },
                             body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                         });
 
