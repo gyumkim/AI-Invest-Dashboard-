@@ -118,6 +118,42 @@
         .message {
             margin-bottom: 5px;
         }
+        
+        .user-message {
+            text-align: right;
+        }
+
+        .ai-message {
+            text-align: left;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            background-color: #0d1117;
+            color: #c9d1d9;
+        }
+
+        .chat-input button {
+            background-color: #38a169;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .chat-input button:hover {
+            background-color: #277953;
+        }
 
         .summary-btn {
             background-color: #38a169;
@@ -233,19 +269,21 @@
                     <h2>AI 기반 뉴스 요약 📰</h2>
                     <ul id="news-list">
                         <li class="news-item" data-full-text="최근 발표된 보고서에 따르면, 인공지능(AI) 기술이 반도체 산업의 새로운 성장 동력으로 강력하게 부상하고 있습니다. AI 칩 수요는 급증하고 있으며, 이는 기존 반도체 시장의 규모를 훨씬 뛰어넘는 잠재력을 보여주고 있습니다. NVIDIA, AMD와 같은 기업들이 AI 칩 시장을 선도하며 새로운 투자의 기회를 창출하고 있습니다.">AI, 반도체 산업의 새로운 성장 동력으로 부상</li>
-                        <li class="news-item" data-full-text="Apple(AAPL)이 차세대 아이폰과 맥북을 공개하며 시장의 기대를 뛰어넘는 성능을 선보였습니다. 특히, 새로운 AI 기능이 탑재된 운영체제는 사용자 경험을 혁신적으로 개선할 것으로 예상됩니다. 전문가들은 이번 신제품 발표가 Apple의 주가에 긍정적인 영향을 미칠 것으로 분석하고 있습니다.">Apple (AAPL) 신제품 발표, 시장 예상치 상회</li>
+                        <li class="news-item" data-full-text="Apple(AAPL)이 구글 제미니 AI를 Siri에 통합하는 방안을 논의 중이라는 소식이 전해졌습니다. 이는 Apple의 AI 전략에 큰 변화를 가져올 수 있는 중요한 움직임으로, 양사 간의 협력 가능성에 투자자들의 이목이 집중되고 있습니다.">Apple, 구글 Gemini AI 탑재 Siri에 통합 논의</li>
+                        <li class="news-item" data-full-text="Apple은 차세대 아이폰과 맥북을 공개하며 시장의 기대를 뛰어넘는 성능을 선보였습니다. 특히, 새로운 AI 기능이 탑재된 운영체제는 사용자 경험을 혁신적으로 개선할 것으로 예상됩니다. 전문가들은 이번 신제품 발표가 Apple의 주가에 긍정적인 영향을 미칠 것으로 분석하고 있습니다.">Apple, 신제품 발표로 시장 예상치 상회</li>
                         <li class="news-item" data-full-text="미국 연방준비제도(Fed)의 다음 금리 인상 또는 인하 결정이 임박했습니다. 이번 발표는 전 세계 금융 시장에 큰 영향을 미칠 것으로 보입니다. 투자자들은 Fed의 발표 내용을 주시하며 포트폴리오를 조정하고 있으며, 시장의 변동성이 확대될 가능성이 높습니다.">연준 금리 발표 임박, 시장 변동성 확대</li>
                     </ul>
                 </div>
                 <div class="discussion-section">
-                    <h2>시장 동향 분석 🧠</h2>
+                    <h2>로봇과 토론 🧠</h2>
                     <div class="discussion-box" id="discussion-box">
-                        <div class="message">
-                            <strong>사용자1:</strong> AI 관련주 오늘 오르네요!
+                        <div class="message ai-message">
+                            <strong>AI_Bot:</strong> 무엇이 궁금하신가요? 시장 동향이나 특정 종목에 대해 질문해주세요.
                         </div>
-                        <div class="message">
-                            <strong>AI_Bot:</strong> 네, 관련 뉴스 분석 결과 긍정적입니다.
-                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="user-input" placeholder="질문을 입력하세요...">
+                        <button id="send-btn">전송</button>
                     </div>
                     <button class="summary-btn" id="market-analysis-btn">시장 동향 분석하기</button>
                     <div id="loader" class="loader"></div>
@@ -271,6 +309,8 @@
             const discussionBox = document.getElementById('discussion-box');
             const loader = document.getElementById('loader');
             const chartPlaceholder = document.querySelector('.chart-placeholder span');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
 
             const popup = document.getElementById('popup');
             const popupTitle = document.getElementById('popup-title');
@@ -319,7 +359,49 @@
                 }
             });
 
-            // 시장 동향 분석 기능
+            // 로봇과 토론 기능
+            const sendMessage = async () => {
+                const userMessage = userInput.value.trim();
+                if (userMessage === '') return;
+
+                // 사용자 메시지를 토론 상자에 추가
+                const userMsgElement = document.createElement('div');
+                userMsgElement.classList.add('message', 'user-message');
+                userMsgElement.innerHTML = `<strong>사용자:</strong> ${userMessage}`;
+                discussionBox.appendChild(userMsgElement);
+                userInput.value = '';
+                discussionBox.scrollTop = discussionBox.scrollHeight;
+
+                // AI 응답 로딩 표시
+                const aiLoadingElement = document.createElement('div');
+                aiLoadingElement.classList.add('message', 'ai-message');
+                aiLoadingElement.innerHTML = `<strong>AI_Bot:</strong> ...`;
+                discussionBox.appendChild(aiLoadingElement);
+                discussionBox.scrollTop = discussionBox.scrollHeight;
+
+                try {
+                    const prompt = `당신은 투자 시장의 동향을 전문적으로 분석하는 AI 챗봇입니다. 다음 사용자의 질문에 대해 전문적이고 간결하게 답변해주세요: "${userMessage}"`;
+                    const aiResponse = await callGeminiAPI(prompt);
+
+                    // 로딩 메시지를 실제 응답으로 교체
+                    aiLoadingElement.innerHTML = `<strong>AI_Bot:</strong> ${aiResponse}`;
+                } catch (error) {
+                    aiLoadingElement.innerHTML = `<strong>AI_Bot:</strong> 죄송합니다. 지금은 답변을 드릴 수 없습니다.`;
+                    console.error('Gemini API 호출 오류:', error);
+                } finally {
+                    discussionBox.scrollTop = discussionBox.scrollHeight;
+                }
+            };
+            
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+
+            // 시장 동향 분석 기능 (로봇 토론 내용 포함)
             marketAnalysisBtn.addEventListener('click', async () => {
                 const discussionText = discussionBox.innerText;
                 const newsText = Array.from(document.querySelectorAll('#news-list li'))
@@ -366,6 +448,7 @@
             // Gemini API 호출 함수
             async function callGeminiAPI(prompt) {
                 const apiKey = "AIzaSyBFzE8yoVdxLcHfnjGuYDKoMWDVh4K1J0Y";a 여기에 실제 Gemini API 키를 넣어주세요.
+
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
                 
                 let response = null;
