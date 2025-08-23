@@ -197,7 +197,7 @@
 <body>
     <div class="dashboard-container">
         <header class="header">
-            <h1>AI Investment Dashboard TV</h1>
+            <h1>AI Investment Dashboard 📊</h1>
         </header>
 
         <main class="main-content">
@@ -210,7 +210,7 @@
 
             <div class="info-panel">
                 <div class="stock-list">
-                    <h2>종목</h2>
+                    <h2>주요 지수/종목</h2>
                     <ul id="stock-list">
                         <li data-stock="stock1">
                             <span class="stock-name">S&P 500</span>
@@ -230,7 +230,7 @@
                     </ul>
                 </div>
                 <div class="news-section">
-                    <h2>AI 기반 뉴스 ✨</h2>
+                    <h2>AI 기반 뉴스 요약 📰</h2>
                     <ul id="news-list">
                         <li class="news-item" data-full-text="최근 발표된 보고서에 따르면, 인공지능(AI) 기술이 반도체 산업의 새로운 성장 동력으로 강력하게 부상하고 있습니다. AI 칩 수요는 급증하고 있으며, 이는 기존 반도체 시장의 규모를 훨씬 뛰어넘는 잠재력을 보여주고 있습니다. NVIDIA, AMD와 같은 기업들이 AI 칩 시장을 선도하며 새로운 투자의 기회를 창출하고 있습니다.">AI, 반도체 산업의 새로운 성장 동력으로 부상</li>
                         <li class="news-item" data-full-text="Apple(AAPL)이 차세대 아이폰과 맥북을 공개하며 시장의 기대를 뛰어넘는 성능을 선보였습니다. 특히, 새로운 AI 기능이 탑재된 운영체제는 사용자 경험을 혁신적으로 개선할 것으로 예상됩니다. 전문가들은 이번 신제품 발표가 Apple의 주가에 긍정적인 영향을 미칠 것으로 분석하고 있습니다.">Apple (AAPL) 신제품 발표, 시장 예상치 상회</li>
@@ -238,7 +238,7 @@
                     </ul>
                 </div>
                 <div class="discussion-section">
-                    <h2>실시간 토론 ✨</h2>
+                    <h2>시장 동향 분석 🧠</h2>
                     <div class="discussion-box" id="discussion-box">
                         <div class="message">
                             <strong>사용자1:</strong> AI 관련주 오늘 오르네요!
@@ -247,14 +247,13 @@
                             <strong>AI_Bot:</strong> 네, 관련 뉴스 분석 결과 긍정적입니다.
                         </div>
                     </div>
-                    <button class="summary-btn" id="market-analysis-btn">시장 동향 분석하기 ✨</button>
+                    <button class="summary-btn" id="market-analysis-btn">시장 동향 분석하기</button>
                     <div id="loader" class="loader"></div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- 팝업 모달 -->
     <div id="popup" class="popup">
         <div class="popup-content">
             <span class="close-btn" id="close-popup">&times;</span>
@@ -279,9 +278,9 @@
             const closePopupBtn = document.getElementById('close-popup');
 
             const stockData = {
-                'stock1': 'S&P 500 차트입니다.',
-                'stock2': 'NASDAQ 차트입니다.',
-                'stock3': 'Apple (AAPL) 차트입니다.'
+                'stock1': 'S&P 500 차트입니다. (실제 데이터 연동 필요)',
+                'stock2': 'NASDAQ 차트입니다. (실제 데이터 연동 필요)',
+                'stock3': 'Apple (AAPL) 차트입니다. (실제 데이터 연동 필요)'
             };
 
             stockList.addEventListener('click', (event) => {
@@ -301,15 +300,14 @@
                     const newsTitle = newsItem.textContent;
                     
                     loader.style.display = 'inline-block';
-                    popupTitle.textContent = '뉴스 요약 중...';
-                    popupText.textContent = '잠시만 기다려주세요.';
+                    popupTitle.textContent = newsTitle;
+                    popupText.textContent = '뉴스 요약 중... 잠시만 기다려주세요.';
                     popup.style.display = 'flex';
 
                     try {
                         const prompt = `다음 뉴스 기사를 한 문장으로 간결하게 요약해 주세요: "${fullText}"`;
                         const summary = await callGeminiAPI(prompt);
                         
-                        popupTitle.textContent = newsTitle;
                         popupText.textContent = summary;
                     } catch (error) {
                         popupTitle.textContent = '오류 발생';
@@ -324,8 +322,11 @@
             // 시장 동향 분석 기능
             marketAnalysisBtn.addEventListener('click', async () => {
                 const discussionText = discussionBox.innerText;
-                const newsText = document.getElementById('news-list').innerText;
-                const prompt = `현재 토론 내용과 시장 뉴스를 바탕으로 AI 투자 시장의 전반적인 동향을 한 문단으로 분석해 주세요.
+                const newsText = Array.from(document.querySelectorAll('#news-list li'))
+                                    .map(item => item.textContent.trim())
+                                    .join('; ');
+
+                const prompt = `현재 대시보드에 표시된 토론 내용과 시장 뉴스를 종합하여 AI 투자 시장의 전반적인 동향을 한 문단으로 분석하고, 향후 전망에 대한 의견을 제시해 주세요.
                 
                 <토론 내용>
                 ${discussionText}
@@ -364,12 +365,8 @@
 
             // Gemini API 호출 함수
             async function callGeminiAPI(prompt) {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                const payload = { contents: chatHistory };
-                // NOTE: Replace "AIzaSyBFzE8yoVdxLcHfnjGuYDKoMWDVh4K1J0Y" with your actual Gemini API key
-                const apiKey = "AIzaSyBFzE8yoVdxLcHfnjGuYDKoMWDVh4K1J0Y";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const apiKey = "AIzaSyBFzE8yoVdxLcHfnjGuYDKoMWDVh4K1J0Y";a 여기에 실제 Gemini API 키를 넣어주세요.
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
                 
                 let response = null;
                 let retryCount = 0;
@@ -381,14 +378,12 @@
                         response = await fetch(apiUrl, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                         });
 
                         if (response.ok) {
                             const result = await response.json();
-                            if (result.candidates && result.candidates.length > 0 &&
-                                result.candidates[0].content && result.candidates[0].content.parts &&
-                                result.candidates[0].content.parts.length > 0) {
+                            if (result.candidates && result.candidates.length > 0) {
                                 return result.candidates[0].content.parts[0].text;
                             }
                         }
